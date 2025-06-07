@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sravya Balivada - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 * {
     margin: 0;
@@ -142,6 +143,23 @@ nav ul li a:hover::after {
 
 nav ul li a:hover {
     color: #00ddeb;
+    text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
+}
+
+nav .social-links {
+    display: flex;
+    gap: 15px;
+}
+
+nav .social-links a {
+    color: white;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+nav .social-links a:hover {
+    color: #00ddeb;
+    transform: translateY(-3px);
     text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
 }
 
@@ -644,18 +662,18 @@ nav ul li a:hover {
         padding: 20px;
     }
 
-    nav ul {
+    nav ul, nav .social-links {
         display: none;
         flex-direction: column;
         width: 100%;
         margin-top: 20px;
     }
 
-    nav ul.active {
+    nav ul.active, nav .social-links.active {
         display: flex;
     }
 
-    nav ul li {
+    nav ul li, nav .social-links a {
         margin: 10px 0;
     }
 
@@ -803,6 +821,11 @@ nav ul li a:hover {
             <li><a href="#project">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
+        <div class="social-links" id="social-links">
+            <a href="https://github.com/savyabalivada" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/sravya-balivada-742651362/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="mailto:sravyabalivada@example.com" title="Email"><i class="fas fa-envelope"></i></a>
+        </div>
     </nav>
 
     <section class="main-section" id="home">
@@ -974,7 +997,9 @@ nav ul li a:hover {
         // Hamburger menu toggle
         function toggleMenu() {
             const navLinks = document.getElementById('nav-links');
+            const socialLinks = document.getElementById('social-links');
             navLinks.classList.toggle('active');
+            socialLinks.classList.toggle('active');
         }
 
         // Custom cursor
@@ -1027,7 +1052,7 @@ nav ul li a:hover {
         });
 
         const particles = [];
-        const mouse = { x: null, y: null, radius: 150 };
+        const mouse = { x: null, y: null, radius: 100 };
 
         document.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
@@ -1038,9 +1063,9 @@ nav ul li a:hover {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 5 + 3;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 - 1;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 1.5 - 0.75;
+                this.speedY = Math.random() * 1.5 - 0.75;
             }
 
             update() {
@@ -1064,8 +1089,8 @@ nav ul li a:hover {
                     let forceDirectionY = dy / distance;
                     let maxDistance = mouse.radius;
                     let force = (maxDistance - distance) / maxDistance;
-                    let directionX = forceDirectionX * force * 3;
-                    let directionY = forceDirectionY * force * 3;
+                    let directionX = forceDirectionX * force * 2;
+                    let directionY = forceDirectionY * force * 2;
 
                     this.x -= directionX;
                     this.y -= directionY;
@@ -1075,13 +1100,13 @@ nav ul li a:hover {
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
                 ctx.fill();
             }
         }
 
         function initParticles() {
-            const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+            const particleCount = Math.floor((canvas.width * canvas.height) / 10000);
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
@@ -1094,9 +1119,9 @@ nav ul li a:hover {
                     let dy = particles[a].y - particles[b].y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 150) {
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 150})`;
-                        ctx.lineWidth = 1;
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 100})`;
+                        ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(particles[a].x, particles[a].y);
                         ctx.lineTo(particles[b].x, particles[b].y);
