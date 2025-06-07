@@ -20,6 +20,17 @@ body {
     background-size: 400% 400%;
     cursor: none;
     overflow-x: hidden;
+    position: relative;
+}
+
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
 }
 
 @keyframes gradientAnimation {
@@ -442,7 +453,6 @@ nav ul li a:hover {
     display: flex;
     gap: 30px;
     width: max-content;
-
 }
 
 .projects-grid:hover {
@@ -780,6 +790,7 @@ nav ul li a:hover {
     </style>
 </head>
 <body>
+    <canvas id="particle-canvas"></canvas>
     <div class="cursor" id="cursor"></div>
     <nav>
         <div class="logo">Sravya</div>
@@ -802,7 +813,7 @@ nav ul li a:hover {
             <p>
                 I'm a passionate Front-End Developer specializing in React.js, with strong proficiency in HTML, CSS, and Material UI. Experienced in building fast and scalable websites using Vite and Redux for state management. I love creating clean code, optimizing performance, and designing user-centric experiences.
             </p>
-           <button class="linkedin-btn" onclick="window.open('https://www.linkedin.com/in/sravya-balivada-742651362/', '_blank')">Connect on LinkedIn</button>
+            <button class="linkedin-btn" onclick="window.open('https://www.linkedin.com/in/sravya-balivada-742651362/', '_blank')">Connect on LinkedIn</button>
         </div>
         <div class="profile-img">
             <img src="11st.jpg" alt="Profile picture of Sravya Balivada">
@@ -890,7 +901,6 @@ nav ul li a:hover {
                 <div class="icon">🐍</div>
                 <div>Python</div>
             </div>
-           
         </div>
     </section>
 
@@ -898,14 +908,14 @@ nav ul li a:hover {
         <h2>🚀 Projects</h2>
         <div class="projects-container">
             <div class="projects-grid">
-                 <div class="project-card">
+                <div class="project-card">
                     <div class="project-img">
                         <img src="portfolio.png" alt="Portfolio Website screenshot">
                     </div>
                     <div class="project-content">
                         <div class="project-buttons">
-                          <button class="live-demo" onclick="window.open('https://savyabalivada.github.io/Portfolio-/', '_blank')">Live Demo</button>
-                        <button class="view-code" onclick="window.open('https://github.com/savyabalivada/portfolio-', '_blank')">View Code</button>
+                            <button class="live-demo" onclick="window.open('https://example.com/portfolio', '_blank')">Live Demo</button>
+                            <button class="view-code" onclick="window.open('https://github.com/savyabalivada/portfolio-', '_blank')">View Code</button>
                         </div>
                         <h3>Portfolio Website</h3>
                         <p>A personal portfolio showcasing my skills, projects, and contact information, built with a focus on modern design and smooth animations.</p>
@@ -923,22 +933,20 @@ nav ul li a:hover {
                     </div>
                     <div class="project-content">
                         <div class="project-buttons">
-                           <a href="https://ease-shop-online.lovable.app/" target="_blank" class="live-demo">Live Demo</a>
-                        <a href="#" target="_blank" class="view-code">View Code</a>
+                            <a href="https://ease-shop-online.lovable.app/" target="_blank" class="live-demo">Live Demo</a>
+                            <a href="#" target="_blank" class="view-code">View Code</a>
                         </div>
                         <h3>E-commerce Platform</h3>
                         <p>A full-featured e-commerce platform with product management, shopping cart functionality, user authentication, and secure payment processing integration.</p>
                         <div class="tech-tags">
                             <span class="tech-tag">React</span>
-                            <span class="tech-tag">Redux  </span>  
-                           <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">Redux</span>
+                            <span class="tech-tag">Node.js</span>
                             <span class="tech-tag">MongoDB</span>
                             <span class="tech-tag">Stripe</span>
                         </div>
                     </div>
                 </div>
-                
-               
             </div>
         </div>
     </section>
@@ -1005,6 +1013,111 @@ nav ul li a:hover {
         }, { threshold: 0.1 });
 
         sections.forEach(section => observer.observe(section));
+
+        // Particle animation
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 3;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Bounce off walls
+                if (this.x + this.size > canvas.width || this.x - this.size < 0) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y + this.size > canvas.height || this.y - this.size < 0) {
+                    this.speedY = -this.speedY;
+                }
+
+                // Mouse interaction
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < mouse.radius) {
+                    let forceDirectionX = dx / distance;
+                    let forceDirectionY = dy / distance;
+                    let maxDistance = mouse.radius;
+                    let force = (maxDistance - distance) / maxDistance;
+                    let directionX = forceDirectionX * force * 3;
+                    let directionY = forceDirectionY * force * 3;
+
+                    this.x -= directionX;
+                    this.y -= directionY;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 150})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
     </script>
 </body>
 </html>
